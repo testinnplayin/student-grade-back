@@ -91,4 +91,16 @@ router.put('/:id', jsonParser, (req, res) => {
     .catch(err => sendError(err, res, 500, `couldn't update class of id ${req.params.id}`));
 });
 
+// DELETE requests
+
+// delete a specific class at /api/classes/:id
+
+router.delete('/:id', (req, res) => {
+  Klass
+    .findByIdAndRemove(req.params.id)
+    .exec()
+    .then(() => res.status(204).end())
+    .catch(err => sendError(err, res, 500, `couldn't delete class of id ${req.params.id}`));
+});
+
 module.exports = router;
