@@ -18,9 +18,11 @@ const {DATABASE_URL, PORT} = require('./config');
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
 
-const klassRouter = require('./routes/klasses');
+const klassRouter = require('./routes/classes');
 // const gradeRouter = require('./routes/grade');
 // const studentRouter = require('./routes/student');
+
+app.use('/classes', klassRouter);
 
 app.use(morgan('common'));
 
@@ -42,12 +44,14 @@ function runServer(databaseUrl=DATABASE_URL, port=PORT) {
         resolve();
       })
       .on('error', err => {
+        console.error(err);
         mongoose.disconnect();
         reject(err);
       });
     });
   });
 }
+
 
 function closeServer() {
   return mongoose.disconnect()
@@ -69,4 +73,4 @@ if (require.main === module) {
   runServer().catch(err => console.error(err));
 }
 
-module.exports = { app, runServer, closeServer}
+module.exports = {app, runServer, closeServer}

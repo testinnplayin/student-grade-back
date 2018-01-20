@@ -42,4 +42,4 @@ const klassSchema = mongoose.Schema({
 
 const Klass = mongoose.model('Klass', klassSchema);
 
-module.exports = { Klass };
+module.exports = {Klass};
