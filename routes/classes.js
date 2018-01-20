@@ -15,40 +15,54 @@ app.use(bodyParser.urlencoded({ extended : false }));
 
 const {Klass} = require('../models/class');
 
-const {send404, send500} = require('../helpers/error-handlers');
+const {checkRequiredFields, sendError} = require('../helpers/error-handlers');
 
 // GET requests
 
-// main get at /api/get
+// main get at /api/classes
 
 router.get('/', (req, res) => {
- console.log('classes hit')
+ // console.log('classes hit');
  Klass
   .find()
   .exec()
   .then(klasses => {
-    if (!klasses) {
-      send404(req, res);
-    }
     res.status(200).json({ classes : klasses });
   })
-  .catch(err => send500(req, res, err, 'cannot fetch classes'));
+  .catch(err => sendError(err, res, 500, 'cannot fetch classes'));
 });
 
-// specific get at /get/:id
+// specific get at /classes/:id
 
 router.get('/:id', (req, res) => {
  Klass
   .findById(req.params.id)
-  .populate({ path : 'students', path: 'grades' })
+  // .populate({ path : 'students', path: 'grades' }) needs to be added in once some students have been created
   .exec()
   .then(klass => {
-    if (!klass) {
-      send404(req, res);
-    }
     res.status(200).json({ class : klass });
   })
-  .catch(err => send500(req, res, err, `cannot fetch class of id ${req.params.id}`));
+  .catch(err => sendError(err, res, 500, `cannot fetch class of id ${req.params.id}`));
+});
+
+// POST requests
+
+// post at /api/classes
+
+router.post('/', jsonParser, (req, res) => {
+  const reqFields = ['name'],
+    reqStatus = checkRequiredFields(req, reqFields);
+
+  if (!reqStatus.isOk) {
+    sendError(err, res, 400, reqStatus.msg);
+  }
+
+  Klass
+    .create(req.body)
+    .then((klass) => {
+      if (klass) res.status(201).json({ class : klass })
+    })
+    .catch((err) => sendError(err, res, 500, 'couldn\'t create class'));
 });
 
 module.exports = router;
