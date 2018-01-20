@@ -20,9 +20,10 @@ app.use(bodyParser.json());
 
 const klassRouter = require('./routes/classes');
 // const gradeRouter = require('./routes/grade');
-// const studentRouter = require('./routes/student');
+const studentRouter = require('./routes/students');
 
 app.use('/classes', klassRouter);
+app.use('/students', studentRouter);
 
 app.use(morgan('common'));
 

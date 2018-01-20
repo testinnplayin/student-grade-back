@@ -35,3 +35,5 @@ router.get('/:id', (req, res) => {
     .then(student => res.status(200).json({ student : student }))
     .catch(err => sendError(err, res, 500, `cannot fetch student of id ${req.params.id}`));
 });
+
+module.exports = router;

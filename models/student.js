@@ -21,6 +21,6 @@ const studentSchema = mongoose.Schema({
   grades : [{ type : mongoose.Schema.Types.ObjectId, ref : 'Grade' }]
 });
 
-const Student = mongoose.model('Grade', studentSchema);
+const Student = mongoose.model('Student', studentSchema);
 
-module.exports = { Student };
+module.exports = {Student};
