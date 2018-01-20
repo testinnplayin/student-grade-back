@@ -31,6 +31,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   Student
     .findById(req.params.id)
+    // .populate({ path : 'classes', path: 'grades'})
     .then(student => res.status(200).json({ student : student }))
     .catch(err => sendError(err, res, 500, `cannot fetch student of id ${req.params.id}`));
 });
