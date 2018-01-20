@@ -34,4 +34,20 @@ const {send404, send500} = require('../helpers/error-handlers');
     .catch(err => send500(req, res, err, 'cannot fetch classes'));
  });
 
+ // specific get at /get/:id
+
+ router.get('/:id', (req, res) => {
+   Klass
+    .findById(req.params.id)
+    .populate({ path : 'students', path: 'grades' })
+    .exec()
+    .then(klass => {
+      if (!klass) {
+        send404(req, res);
+      }
+      res.status(200).json({ class : klass });
+    })
+    .catch(err => send500(req, res, err, `cannot fetch class of id ${req.params.id}`));
+ });
+
  module.exports = router;
