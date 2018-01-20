@@ -60,9 +60,35 @@ router.post('/', jsonParser, (req, res) => {
   Klass
     .create(req.body)
     .then((klass) => {
-      if (klass) res.status(201).json({ class : klass })
+      if (!klass) {
+        sendError(err, res, 404, 'Not found');
+      }
+      res.status(201).json({ class : klass });
     })
     .catch((err) => sendError(err, res, 500, 'couldn\'t create class'));
+});
+
+// PUT requests
+
+// edit at /api/classes/:id
+
+router.put('/:id', jsonParser, (req, res) => {
+  const reqFields = ['name'],
+    reqStatus = checkRequiredFields(req, reqFields);
+  if (!reqStatus.isOk) {
+    sendError(err, res, 400, reqStatus.msg);
+  }
+
+  Klass
+    .findByIdAndUpdate(req.params.id, req.body, { new : true })
+    .exec()
+    .then(klass => {
+      if (!klass) {
+        sendError(err, res, 404, 'Not found');
+      }
+      res.status(201).json({ class : klass });
+    })
+    .catch(err => sendError(err, res, 500, `couldn't update class of id ${req.params.id}`));
 });
 
 module.exports = router;
