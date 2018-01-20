@@ -4,12 +4,31 @@
 
 'use strict';
 
-function send404(req, res) {
-  res.status(404).json({ message : 'Cannot find resource' });
+function checkRequiredFields(req, reqFields) {
+  let reqStatus;
+  if (req.body) {
+    for (field of reqFields) {
+      const properties = Object.keys(req.body);
+      if (!properties.includes(field)) {
+        reqStatus = { isOk : false, msg : `Required field ${field} not on request body` };
+        return reqStatus;
+      } else {
+        if (req.body[field] === null || req.body[field] === undefined) {
+          reqStatus = { isOk : false, msg : `Required field ${field} not filled` };
+          return reqStatus;
+        }
+      }
+    }
+    reqStatus = { isOk : true, msg : null };
+  } else {
+    reqStatus = { isOk : false, msg : 'No request body' };
+  }
+  return reqStatus;
 }
 
-function send500(req, res, err, msg) {
-  res.status(500).json({ message : `Internal server error, ${msg}`});
+function sendError(err, res, status, msg) {
+  console.error(err);
+  res.status(status).json({ message : msg });
 }
 
-module.exports = {send404, send500};
+module.exports = {sendError};
